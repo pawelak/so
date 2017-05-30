@@ -1,0 +1,75 @@
+wątki sa uruchamiane współbierznie do naszego 
+
+
+
+p1
+robi nam 2 wątki RÓWNOCZEŚNIE 
+
+na koniec wątek rodzic czeka na zakońćzenie się tych wątków w sposób blokujący 
+chce żeby sprzątać po wątkach czyi czekać w sposób jawny na joiny 
+
+no i w tym programie pojawiły się wyścigi wątków
+
+czyli ze jeden drugiemu się wcina w standardowe wyjście a jest to zjawisko nieporządane
+
+
+p2
+wątki uruchamiają się wspólnie ale drugi budzi się wczesniej i zmienia wartość pierwszemy czyli widać ze współdzielą pamięć czy tam zmienna
+
+p3
+robiy wektor wątków 
+i iteruje po nich 
+i na każdym leci 
+czyli jst 10 wątków każdy sumuje 10mln czyli powinno być 70mln 
+
+p4
+zastosowanie synchronizacji 
+mutex - najprostsze synchro w c++11 
+mx.lock();
+blokada na to co robimy 
+mx.unlock();
+
+mutexsy nie są darmowe, one trwają, czekają i opóźniają 
+mutex ma gwarancje kolejki czylko kto dojstaje dostęp po kim 
+
+p5
+fajny pechanim działający tak jak mutex
+std::lock_guard<std::mutex> lock(mx)
+w konstruktorze robi lock 
+i w destruktorze unlock
+
+zaleta tego jest taka że działa 
+wada taka że jak walnie wyjątek to nie zrobimy unlock
+czyli ogólnie dobre do małych funkcji 
+
+
+p6
+jeśli mamy dużo wątków i zapominamy o unlock i jest zakleszczenie
+
+czyli że 2 wątki wezmą sobie po jednym z dwóch potrzebnych zasobów które sa niezbędne do zakończenia funkcji no i się zakleszczy 
+
+czyli trzeba się pilnować zeby trzymac kolejność 
+
+
+
+
+projekty:
+
+ncurses - musumy mieć 
+
+
+
+
+
+
+
+
+ciekawoostki procesy- nie współdzielą nic
+wątki współdzielą i istnieją w ramach jednego procesu 
+time ./o2.out - opkauje czas
+watch ./o2.out - puszcza cały czas 
+
+
+
+
+

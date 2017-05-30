@@ -1,0 +1,14 @@
+komendy:
+
+{print NR " " $0}
+NR >= 5 && NR <= 10 { print NR " " $0 }
+/[0-9]+/ { print  toupper($0) }
+$3 ~ /^[0-9]$/ { print NR " " toupper($0) }
+BEGIN { FS="," } { for ( i=1 ; i<=NF ; i++)  x[i] += $i } END { for ( i in x ) printf x[i] " " } 
+NR%2==1 { suma += $NF } END {print suma}
+!/[z]+/ { print toupper($0) }
+
+
+
+
+
