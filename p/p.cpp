@@ -38,23 +38,6 @@ void clearMatrix()
 		this_thread::sleep_for(std::chrono::seconds(30));
 	}
 }
-void fillMatrix()
-{
-	while(true)
-	{	
-		for (int i=0; i<=m; i++)
-		{
-			mx.lock();
-			for (int j=0; j<=n; j++)
-			{
-				matrix[i][j] = true;
-			}
-			mx.unlock();
-		}
-
-		this_thread::sleep_for(std::chrono::seconds(1));
-	}
-}
 
 void printMatrix()
 {	
@@ -88,14 +71,14 @@ void printMatrix()
 		}
 		mx.unlock();
 		refresh();	
-		this_thread::sleep_for(std::chrono::seconds(1));	
+		this_thread::sleep_for(std::chrono::milliseconds(500));	
 		
 	}
 	
 	
 }
 
-void producent()
+void producer()
 {
 	srand( time( NULL ) );
 	while(true)
@@ -105,20 +88,13 @@ void producent()
 		k1.unlock();
 		k2.lock();
 		kolejka2.push(rand() % n );
-		k2.unlock();	
+		k2.unlock();
+		std::this_thread::sleep_for (std::chrono::milliseconds(100));		//bo leciało strasznie szybko 
 	}
 }
+	
 
-void print()
-{	
-	while(true)
-	{
-		if(int a = kolejka1.back()) cout << a;
-		if(int a = kolejka2.back()) cout << a;
-	}	
-}
-
-bool przestaw (int x, int y)
+bool moveTo(int x, int y)
 {
 	int r = rand() % 3;
 	if(r==0 && x > 0 && matrix[x-1][y] == false)
@@ -149,7 +125,7 @@ bool przestaw (int x, int y)
 	return false;
 }
 
-void przetwarzacz()
+void processer()
 {	
 	while(true)
 	{
@@ -161,7 +137,7 @@ void przetwarzacz()
 				if(matrix[i][j] == true)
 				{
 					mx.lock();
-					przestaw(i,j);
+					moveTo(i,j);
 					mx.unlock();
 				}
 			}
@@ -175,54 +151,36 @@ void przetwarzacz()
 		if(int a = kolejka2.back())y = kolejka2.back();
 		k2.unlock();
 		mx.lock();
-		if(matrix[x][y] == true)przestaw(x,y);
+		if(matrix[x][y] == true)moveTo(x,y);
 		matrix[x][y] = true;
 		mx.unlock();
-		std::this_thread::sleep_for (std::chrono::milliseconds(500));	
+		std::this_thread::sleep_for (std::chrono::milliseconds(100));	//bo leciało strasznie szybko 	
 	}	
 }
 
-void test()
-{
-	while(true)
-	{	
-		
-		std::this_thread::sleep_for (std::chrono::seconds(1));	
-		printw("hej");
-		
 
-		refresh();
-		
-		
-	}
-	
-}
 
 int main()
 {
 	initscr();
 
-
-
 	auto tClear = thread(clearMatrix);
 	auto tPrint = thread(printMatrix);
-	//auto tFill = thread(fillMatrix);
-	auto tProducent = thread(producent);
-	auto tPrzetwarzacz = thread(przetwarzacz);
+	auto tProducer = thread(producer);
+	auto tProcesser = thread(processer);
 	
 
 	tClear.join();
 	tPrint.join();
-	//tFill.join();
-	tProducent.join();
-	tPrzetwarzacz.join();
+
+	tProducer.join();
+	tProcesser.join();
 
 	
 	endwin();
 
 	return 0;
 }
-//initscr();
-//endwin();
+
 
 
